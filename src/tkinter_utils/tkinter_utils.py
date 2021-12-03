@@ -48,6 +48,8 @@ def updateText(content: str, text: Text, window: Tk):
 def clearText(text: Text, window: Tk):
     """
     清除窗口上的文本显示内容
+    :param text: tkinter.Text
+    :param window: tkinter.Tk
     :return:
     """
     text.config(state=NORMAL)

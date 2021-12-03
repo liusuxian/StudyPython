@@ -82,6 +82,7 @@ def delDateYear(date: datetime.date, connectStr: str = '-', suffixStr: str = '')
 def formatDate(date: datetime.date):
     """
     格式化日期
+    :param date: 日期
     :return: xxxx年xx月xx日
     """
     dateList = str(date).split('-')
