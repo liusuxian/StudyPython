@@ -2,12 +2,13 @@ from tkinter import Tk, INSERT, Text, NORMAL, DISABLED
 
 
 # 创建窗口
-def createWindow(title: str, width: int = 800, height: int = 600):
+def createWindow(title: str, width: int = 800, height: int = 600, resizable: bool = False):
     """
     创建窗口
     :param title: 窗口标题
     :param width: 窗口宽度
     :param height: 窗口高度
+    :param resizable: 是否可调整窗口尺寸
     :return: 返回窗口标识
     """
     window = Tk()
@@ -23,8 +24,8 @@ def createWindow(title: str, width: int = 800, height: int = 600):
     window.title(title)
     # 设置窗口初始位置在屏幕居中
     window.geometry('%sx%s+%s+%s' % (winWidth, winHeight, x, y))
-    # 设置窗口宽高固定
-    window.resizable(0, 0)
+    # 设置是否可调整窗口尺寸
+    window.resizable(resizable, resizable)
     return window
 
 
