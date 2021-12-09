@@ -8,46 +8,28 @@ from StudyPython.src import tkinter_utils, xlsx_utils
 window = tkinter_utils.createWindow('全委子表处理工具')
 # 省会和城市所属的事业部
 provinceCityDict = {
-    '浙江-嘉兴': '事业一部',
-    '浙江-湖州': '事业一部',
-    '浙江-金华': '事业一部',
-    '浙江-丽水': '事业一部',
-    '浙江-衢州': '事业一部',
-    '安徽': '事业一部',
-    '湖北': '事业一部',
-    '广东': '事业一部',
-    '广西': '事业一部',
-    '海南': '事业一部',
-    '福建': '事业一部',
-    '浙江-温州': '事业二部',
-    '浙江-台州': '事业二部',
-    '山东': '事业二部',
-    '重庆': '事业二部',
-    '四川': '事业二部',
-    '贵州': '事业二部',
-    '云南': '事业二部',
-    '浙江-绍兴': '事业三部',
-    '浙江-宁波': '事业三部',
-    '浙江-舟山': '事业三部',
-    '江苏': '事业三部',
-    '河北': '事业三部',
-    '北京': '事业三部',
-    '黑龙江': '事业三部',
-    '吉林': '事业三部',
-    '辽宁': '事业三部',
-    '天津': '事业三部',
-    '陕西': '事业三部',
-    '山西': '事业三部',
-    '新疆': '事业三部',
-    '青海': '事业三部',
-    '甘肃': '事业三部',
-    '宁夏': '事业三部',
-    '河南': '事业三部',
-    '内蒙古': '事业三部',
-    '浙江-杭州': '事业四部',
-    '上海': '事业四部',
-    '湖南': '事业四部',
-    '江西': '事业四部',
+    '浙江-嘉兴': '战区四部',
+    '浙江-湖州': '战区四部',
+    '浙江-金华': '战区三部',
+    '浙江-丽水': '战区三部',
+    '浙江-衢州': '战区三部',
+    '安徽': '战区四部',
+    '浙江-温州': '战区二部',
+    '浙江-台州': '战区五部',
+    '山东': '战区五部',
+    '重庆': '战区五部',
+    '四川': '战区五部',
+    '浙江-绍兴': '战区六部',
+    '浙江-宁波': '战区一部',
+    '浙江-舟山': '战区一部',
+    '江苏': '战区六部',
+    '河北': '战区六部',
+    '北京': '战区六部',
+    '天津': '战区六部',
+    '浙江-杭州（外域）': '战区二部',
+    '浙江-杭州（市内）': '战区七部',
+    '湖南': '战区七部',
+    '江西': '战区七部',
 }
 
 
@@ -63,22 +45,26 @@ def handelFiles():
         # 已存在的全部工作簿
         sheetNames = wb.sheetnames
         # 处理指定的工作簿
-        sheet_name = sheetNames[0]
+        if '全委新签表' not in sheetNames:
+            errStr = '文件：' + fileName + ' 没有需要处理的工作簿或工作簿名称不正确' + '\n'
+            messagebox.showerror('错误', errStr)
+            return
+        sheet_name = '全委新签表'
         sheet = wb[sheet_name]
         # 循环遍历，读取，判断
         height = sheet.row_dimensions[sheet.max_column].height
         targetColumn = sheet.max_column + 1
-        xlsx_utils.insertContent(sheet=sheet, row=2, col=targetColumn, content='所属事业部', rowHeight=height)
+        xlsx_utils.insertContent(sheet=sheet, row=1, col=targetColumn, content='所属事业部', rowHeight=height)
         # 合并单元格
         sheet.merge_cells(start_column=targetColumn, end_column=targetColumn, start_row=2, end_row=4)
         startRow = 5
         for row in range(startRow, sheet.max_row + 1):
             # 省会
-            province = xlsx_utils.parserMergedCell(sheet=sheet, row=row, col=sheet['B' + str(row)].column).value
+            province = xlsx_utils.parserMergedCell(sheet=sheet, row=row, col=sheet['E' + str(row)].column).value
             # 城市
-            city = xlsx_utils.parserMergedCell(sheet=sheet, row=row, col=sheet['C' + str(row)].column).value
+            city = xlsx_utils.parserMergedCell(sheet=sheet, row=row, col=sheet['F' + str(row)].column).value
             # 项目名称
-            project = xlsx_utils.parserMergedCell(sheet=sheet, row=row, col=sheet['G' + str(row)].column).value
+            project = xlsx_utils.parserMergedCell(sheet=sheet, row=row, col=sheet['C' + str(row)].column).value
             if province == '浙江':
                 pcKey = str(province) + '-' + str(city)
                 if pcKey in provinceCityDict:
