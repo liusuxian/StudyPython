@@ -5,6 +5,8 @@ import os
 import time
 import re
 from docx import Document
+from docx.oxml.ns import qn
+from StudyPython.src import docx_utils
 import requests
 
 cityList = [
@@ -51,23 +53,28 @@ def handelRealUrl(realUrl: str):
                     if len(title) > 0:
                         title = title[0].replace("\r\n", "").replace(" ", "")
                         print('title:', title, 'city:', city, 'realUrl:', realUrl)
-                        p = document.add_paragraph(title + '\n' + city + '\n' + realUrl + '\n')
-                        p.add_run('bold').bold = True
-                        p.add_run('and some')
-                        p.add_run('italic.').italic = True
+                        p = document.add_paragraph(title + '\n')
+                        p.add_run(city + '\n').bold = True
+                        docx_utils.addHyperlink(p, realUrl, realUrl, None, True)
                         # 保存文档
-                        document.save('url.docx')
+                        document.save('zhaobiao.docx')
                     break
     else:
         print('handelRealUrl ERROR:', result.status_code, realUrl)
 
 
 # 创建 docx 文件
-isExists = os.path.exists('url.docx')
+isExists = os.path.exists('zhaobiao.docx')
 if isExists:
-    os.remove('url.docx')
+    os.remove('zhaobiao.docx')
 # 创建文档对象
 document = Document()
+# 设置一个空白样式
+style = document.styles['Normal']
+# 设置西文字体
+style.font.name = 'Times New Roman'
+# 设置中文字体
+style.element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
 # 设置文档标题，中文要用unicode字符串
 document.add_heading(u'招标公告信息', 0)
 
