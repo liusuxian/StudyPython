@@ -44,21 +44,24 @@ def handelResUrl(resUrl: str):
 def handelRealUrl(realUrl: str):
     result = requests.get(realUrl)
     if result.status_code == 200:
-        city = re.findall('<ul class="xiangm-xx">.*?<li>.*?<a .*?>(.*?)</a>', result.text, re.S)
-        if len(city) > 0:
-            city = city[0]
-            for c in cityList:
-                if c in city:
-                    title = re.findall('<p class="text-title">(.*?)</p>', result.text, re.S)
-                    if len(title) > 0:
-                        title = title[0].replace("\r\n", "").replace(" ", "")
-                        print('title:', title, 'city:', city, 'realUrl:', realUrl)
-                        p = document.add_paragraph(title + '\n')
-                        p.add_run(city + '\n').bold = True
-                        docx_utils.addHyperlink(p, realUrl, realUrl, None, True)
-                        # 保存文档
-                        document.save('zhaobiao.docx')
-                    break
+        citys = re.findall('<ul class="xiangm-xx">.*?<a(.*?)</li>', result.text, re.S)
+        if len(citys) > 0:
+            citys = citys[0]
+            city = re.findall('>(.*?)</a>', citys, re.S)
+            if len(city) > 0:
+                city = str('-').join(city)
+                for c in cityList:
+                    if c in city:
+                        title = re.findall('<p class="text-title">(.*?)</p>', result.text, re.S)
+                        if len(title) > 0:
+                            title = title[0].replace("\r\n", "").replace(" ", "")
+                            print('title:', title, 'city:', city, 'realUrl:', realUrl)
+                            p = document.add_paragraph(title + '\n')
+                            p.add_run(city + '\n').bold = True
+                            docx_utils.addHyperlink(p, realUrl, realUrl, None, True)
+                            # 保存文档
+                            document.save('zhaobiao.docx')
+                            break
     else:
         print('handelRealUrl ERROR:', result.status_code, realUrl)
 
