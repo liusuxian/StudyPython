@@ -4,12 +4,16 @@ import datetime
 import os
 import time
 import re
-
 from docx import Document
-
 import requests
 
-cityList = ['四川', '成都', '山东', '潍坊', '河北', '唐山', '陕西', '西安', '江苏', '南京']
+cityList = [
+    '成都', '四川',
+    '潍坊', '山东',
+    '唐山', '河北',
+    '西安', '陕西',
+    '南京', '江苏'
+]
 
 
 def handelDateUrl(date: str):
@@ -21,7 +25,7 @@ def handelDateUrl(date: str):
         for resUrl in resUrlList:
             handelResUrl('https://www.bidcenter.com.cn' + resUrl)
     else:
-        print('ERROR:', result.status_code, dateUrl)
+        print('handelDateUrl ERROR:', result.status_code, dateUrl)
 
 
 def handelResUrl(resUrl: str):
@@ -32,7 +36,7 @@ def handelResUrl(resUrl: str):
             time.sleep(1)
             handelRealUrl(realUrl[0])
     else:
-        print('ERROR:', result.status_code, resUrl)
+        print('handelResUrl ERROR:', result.status_code, resUrl)
 
 
 def handelRealUrl(realUrl: str):
@@ -47,14 +51,18 @@ def handelRealUrl(realUrl: str):
                     if len(title) > 0:
                         title = title[0].replace("\r\n", "").replace(" ", "")
                         print('title:', title, 'city:', city, 'realUrl:', realUrl)
-                        document.add_paragraph(title + '\n' + city + '\n' + realUrl + '\n')
+                        p = document.add_paragraph(title + '\n' + city + '\n' + realUrl + '\n')
+                        p.add_run('bold').bold = True
+                        p.add_run('and some')
+                        p.add_run('italic.').italic = True
                         # 保存文档
                         document.save('url.docx')
                     break
     else:
-        print('ERROR:', result.status_code, realUrl)
+        print('handelRealUrl ERROR:', result.status_code, realUrl)
 
 
+# 创建 docx 文件
 isExists = os.path.exists('url.docx')
 if isExists:
     os.remove('url.docx')
@@ -62,12 +70,13 @@ if isExists:
 document = Document()
 # 设置文档标题，中文要用unicode字符串
 document.add_heading(u'招标公告信息', 0)
+
+# 爬取最近6个月的数据
 today = datetime.date.today()
 endYear = today.year
 endMonth = today.month
 endDay = today.day
 print('today:', today)
-
 curYear = endYear
 curMonth = endMonth
 for i in range(0, 6):
