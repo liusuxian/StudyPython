@@ -10,18 +10,25 @@ from StudyPython.src import docx_utils
 import requests
 
 cityList = [
-    '成都', '四川',
-    '潍坊', '山东',
-    '唐山', '河北',
-    '西安', '陕西',
-    '南京', '江苏'
+    '成都',
+    '潍坊',
+    '唐山',
+    '西安',
+    '南京',
+]
+
+provinceList = [
+    '四川',
+    '山东',
+    '河北',
+    '陕西',
+    '江苏'
 ]
 
 
 def handelDateUrl(date: str):
     dateUrl = "https://www.bidcenter.com.cn/newsmore-" + date + '.html'
     print('dateUrl:', dateUrl)
-    time.sleep(5)
     try:
         result = requests.get(dateUrl)
     except Exception as e:
@@ -36,8 +43,8 @@ def handelDateUrl(date: str):
 
 
 def handelResUrl(resUrl: str, date: str):
-    print('handelResUrl:', resUrl)
-    time.sleep(5)
+    # print('handelResUrl:', resUrl)
+    time.sleep(2)
     try:
         result = requests.get(resUrl)
     except Exception as e:
@@ -52,8 +59,8 @@ def handelResUrl(resUrl: str, date: str):
 
 
 def handelRealUrl(realUrl: str, date: str):
-    print('handelRealUrl:', realUrl)
-    time.sleep(5)
+    # print('handelRealUrl:', realUrl)
+    time.sleep(2)
     try:
         result = requests.get(realUrl)
     except Exception as e:
@@ -66,20 +73,31 @@ def handelRealUrl(realUrl: str, date: str):
                 city = re.findall('>(.*?)</a>', citys, re.S)
                 if len(city) > 0:
                     city = str('-').join(city)
-                    for c in cityList:
-                        if c in city:
-                            title = re.findall('<p class="text-title">(.*?)</p>', result.text, re.S)
-                            if len(title) > 0:
-                                title = title[0].replace("\r\n", "").replace(" ", "")
-                                print('time:', date, 'title:', title, 'city:', city, 'realUrl:', realUrl)
-                                p = document.add_paragraph(date + ' ' + title + '\n')
-                                p.add_run(city + '\n').bold = True
-                                docx_utils.addHyperlink(p, realUrl, realUrl, None, True)
-                                # 保存文档
-                                document.save('zhaobiao.docx')
+                    if '-' in city:
+                        for c in cityList:
+                            if c in city:
+                                saveDocx(result, document, date, city, realUrl)
+                                break
+                    else:
+                        for p in provinceList:
+                            if p in city:
+                                saveDocx(result, document, date, city, realUrl)
                                 break
         else:
             print('handelRealUrl ERROR:', result.status_code, realUrl)
+
+
+# 保存docx文档
+def saveDocx(result, doc, date, city, realUrl):
+    title = re.findall('<p class="text-title">(.*?)</p>', result.text, re.S)
+    if len(title) > 0:
+        title = title[0].replace("\r\n", "").replace(" ", "")
+        print('time:', date, 'title:', title, 'city:', city, 'realUrl:', realUrl)
+        p = doc.add_paragraph(date + ' ' + title + '\n')
+        p.add_run(city + '\n').bold = True
+        docx_utils.addHyperlink(p, realUrl, realUrl, None, True)
+        # 保存文档
+        doc.save('zhaobiao.docx')
 
 
 # 创建 docx 文件
