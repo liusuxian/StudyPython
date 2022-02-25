@@ -21,7 +21,7 @@ cityList = [
 def handelDateUrl(date: str):
     dateUrl = "https://www.bidcenter.com.cn/newsmore-" + date + '.html'
     print('dateUrl:', dateUrl)
-    time.sleep(1)
+    time.sleep(5)
     result = requests.get(dateUrl)
     if result.status_code == 200:
         resUrlList = re.findall('<li><a href="(.*?)".*?>.*?</a>', result.text, re.S)
@@ -33,7 +33,7 @@ def handelDateUrl(date: str):
 
 def handelResUrl(resUrl: str, date: str):
     print('handelResUrl:', resUrl)
-    time.sleep(1)
+    time.sleep(5)
     result = requests.get(resUrl)
     if result.status_code == 200:
         realUrl = re.findall('<link rel.*?href="(.*?)" />', result.text, re.S)
@@ -45,7 +45,7 @@ def handelResUrl(resUrl: str, date: str):
 
 def handelRealUrl(realUrl: str, date: str):
     print('handelRealUrl:', realUrl)
-    time.sleep(1)
+    time.sleep(5)
     result = requests.get(realUrl)
     if result.status_code == 200:
         citys = re.findall('<ul class="xiangm-xx">.*?<a(.*?)</li>', result.text, re.S)
