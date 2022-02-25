@@ -22,52 +22,64 @@ def handelDateUrl(date: str):
     dateUrl = "https://www.bidcenter.com.cn/newsmore-" + date + '.html'
     print('dateUrl:', dateUrl)
     time.sleep(5)
-    result = requests.get(dateUrl)
-    if result.status_code == 200:
-        resUrlList = re.findall('<li><a href="(.*?)".*?>.*?</a>', result.text, re.S)
-        for resUrl in resUrlList:
-            handelResUrl('https://www.bidcenter.com.cn' + resUrl, date)
+    try:
+        result = requests.get(dateUrl)
+    except Exception as e:
+        print('handelDateUrl ERROR:', e)
     else:
-        print('handelDateUrl ERROR:', result.status_code, dateUrl)
+        if result.status_code == 200:
+            resUrlList = re.findall('<li><a href="(.*?)".*?>.*?</a>', result.text, re.S)
+            for resUrl in resUrlList:
+                handelResUrl('https://www.bidcenter.com.cn' + resUrl, date)
+        else:
+            print('handelDateUrl ERROR:', result.status_code, dateUrl)
 
 
 def handelResUrl(resUrl: str, date: str):
     print('handelResUrl:', resUrl)
     time.sleep(5)
-    result = requests.get(resUrl)
-    if result.status_code == 200:
-        realUrl = re.findall('<link rel.*?href="(.*?)" />', result.text, re.S)
-        if len(realUrl) > 0 and 'http' in realUrl[0]:
-            handelRealUrl(realUrl[0], date)
+    try:
+        result = requests.get(resUrl)
+    except Exception as e:
+        print('handelResUrl ERROR:', e)
     else:
-        print('handelResUrl ERROR:', result.status_code, resUrl)
+        if result.status_code == 200:
+            realUrl = re.findall('<link rel.*?href="(.*?)" />', result.text, re.S)
+            if len(realUrl) > 0 and 'http' in realUrl[0]:
+                handelRealUrl(realUrl[0], date)
+        else:
+            print('handelResUrl ERROR:', result.status_code, resUrl)
 
 
 def handelRealUrl(realUrl: str, date: str):
     print('handelRealUrl:', realUrl)
     time.sleep(5)
-    result = requests.get(realUrl)
-    if result.status_code == 200:
-        citys = re.findall('<ul class="xiangm-xx">.*?<a(.*?)</li>', result.text, re.S)
-        if len(citys) > 0:
-            citys = citys[0]
-            city = re.findall('>(.*?)</a>', citys, re.S)
-            if len(city) > 0:
-                city = str('-').join(city)
-                for c in cityList:
-                    if c in city:
-                        title = re.findall('<p class="text-title">(.*?)</p>', result.text, re.S)
-                        if len(title) > 0:
-                            title = title[0].replace("\r\n", "").replace(" ", "")
-                            print('time:', date, 'title:', title, 'city:', city, 'realUrl:', realUrl)
-                            p = document.add_paragraph(date + ' ' + title + '\n')
-                            p.add_run(city + '\n').bold = True
-                            docx_utils.addHyperlink(p, realUrl, realUrl, None, True)
-                            # 保存文档
-                            document.save('zhaobiao.docx')
-                            break
+    try:
+        result = requests.get(realUrl)
+    except Exception as e:
+        print('handelRealUrl ERROR:', e)
     else:
-        print('handelRealUrl ERROR:', result.status_code, realUrl)
+        if result.status_code == 200:
+            citys = re.findall('<ul class="xiangm-xx">.*?<a(.*?)</li>', result.text, re.S)
+            if len(citys) > 0:
+                citys = citys[0]
+                city = re.findall('>(.*?)</a>', citys, re.S)
+                if len(city) > 0:
+                    city = str('-').join(city)
+                    for c in cityList:
+                        if c in city:
+                            title = re.findall('<p class="text-title">(.*?)</p>', result.text, re.S)
+                            if len(title) > 0:
+                                title = title[0].replace("\r\n", "").replace(" ", "")
+                                print('time:', date, 'title:', title, 'city:', city, 'realUrl:', realUrl)
+                                p = document.add_paragraph(date + ' ' + title + '\n')
+                                p.add_run(city + '\n').bold = True
+                                docx_utils.addHyperlink(p, realUrl, realUrl, None, True)
+                                # 保存文档
+                                document.save('zhaobiao.docx')
+                                break
+        else:
+            print('handelRealUrl ERROR:', result.status_code, realUrl)
 
 
 # 创建 docx 文件
