@@ -21,27 +21,31 @@ cityList = [
 def handelDateUrl(date: str):
     dateUrl = "https://www.bidcenter.com.cn/newsmore-" + date + '.html'
     print('dateUrl:', dateUrl)
+    time.sleep(1)
     result = requests.get(dateUrl)
     if result.status_code == 200:
         resUrlList = re.findall('<li><a href="(.*?)".*?>.*?</a>', result.text, re.S)
         for resUrl in resUrlList:
-            handelResUrl('https://www.bidcenter.com.cn' + resUrl)
+            handelResUrl('https://www.bidcenter.com.cn' + resUrl, date)
     else:
         print('handelDateUrl ERROR:', result.status_code, dateUrl)
 
 
-def handelResUrl(resUrl: str):
+def handelResUrl(resUrl: str, date: str):
+    print('handelResUrl:', resUrl)
+    time.sleep(1)
     result = requests.get(resUrl)
     if result.status_code == 200:
         realUrl = re.findall('<link rel.*?href="(.*?)" />', result.text, re.S)
-        if len(realUrl) > 0:
-            time.sleep(1)
-            handelRealUrl(realUrl[0])
+        if len(realUrl) > 0 and 'http' in realUrl[0]:
+            handelRealUrl(realUrl[0], date)
     else:
         print('handelResUrl ERROR:', result.status_code, resUrl)
 
 
-def handelRealUrl(realUrl: str):
+def handelRealUrl(realUrl: str, date: str):
+    print('handelRealUrl:', realUrl)
+    time.sleep(1)
     result = requests.get(realUrl)
     if result.status_code == 200:
         citys = re.findall('<ul class="xiangm-xx">.*?<a(.*?)</li>', result.text, re.S)
@@ -55,8 +59,8 @@ def handelRealUrl(realUrl: str):
                         title = re.findall('<p class="text-title">(.*?)</p>', result.text, re.S)
                         if len(title) > 0:
                             title = title[0].replace("\r\n", "").replace(" ", "")
-                            print('title:', title, 'city:', city, 'realUrl:', realUrl)
-                            p = document.add_paragraph(title + '\n')
+                            print('time:', date, 'title:', title, 'city:', city, 'realUrl:', realUrl)
+                            p = document.add_paragraph(date + ' ' + title + '\n')
                             p.add_run(city + '\n').bold = True
                             docx_utils.addHyperlink(p, realUrl, realUrl, None, True)
                             # 保存文档
