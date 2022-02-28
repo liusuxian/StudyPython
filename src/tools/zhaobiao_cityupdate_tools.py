@@ -53,15 +53,16 @@ def handelUrl(url: str, date: str):
             title = re.findall('<h1 class="jq_lijichakan".*?id="title">(.*?)</h1>', result.text, re.S)
             if len(title) > 0:
                 title = title[0].replace("\r\n", "").replace(" ", "")
+                print('== time:', date, 'title:', title)
                 if ('更新' in title) or ('改造' in title):
-                    print('time:', date, 'title:', title, 'url:', url)
+                    print('=== time:', date, 'title:', title, 'url:', url)
                     if ('老旧小区' in title) or ('小区' in title) or ('公寓' in title) or ('住区' in title) or ('旧城' in title) or \
                             ('城市' in title):
                         citys = re.findall('<tbody class="zbrl_tb">.*?<a(.*?)</span>', result.text, re.S)
                         if len(citys) > 0:
                             citys = citys[0]
                             city = re.findall('>(.*?)</a>', citys, re.S)
-                            print('city:', city)
+                            print('==== time:', date, 'title:', title, 'city', city, 'url:', url)
                             if len(city) > 0:
                                 city = str('-').join(city)
                                 if '-' in city:
@@ -80,7 +81,7 @@ def handelUrl(url: str, date: str):
 
 # 保存docx文档
 def saveDocx(doc, date, title, city, url):
-    print('time:', date, 'title:', title, 'city:', city, 'url:', url)
+    print('**** time:', date, 'title:', title, 'city:', city, 'url:', url)
     p = doc.add_paragraph(date + ' ' + title + '\n')
     p.add_run(city + '\n').bold = True
     docx_utils.addHyperlink(p, url, url, None, True)
