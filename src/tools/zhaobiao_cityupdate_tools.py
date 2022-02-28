@@ -10,23 +10,16 @@ from StudyPython.src import docx_utils
 import requests
 
 cityList = [
-    '成都',
-    '潍坊',
-    '唐山',
-    '西安',
-    '南京',
-]
-
-provinceList = [
-    '四川',
-    '山东',
-    '河北',
-    '陕西',
-    '江苏'
+    '四川', '成都',
+    '山东', '潍坊',
+    '河北', '唐山',
+    '陕西', '西安',
+    '江苏', '南京',
 ]
 
 
 def handelDateUrl(date: str):
+    time.sleep(1)
     dateUrl = "https://www.bidcenter.com.cn/newsmore-" + date + '.html'
     print('dateUrl:', dateUrl)
     try:
@@ -65,16 +58,10 @@ def handelUrl(url: str, date: str):
                             print('==== time:', date, 'title:', title, 'city', city, 'url:', url)
                             if len(city) > 0:
                                 city = str('-').join(city)
-                                if '-' in city:
-                                    for c in cityList:
-                                        if c in city:
-                                            saveDocx(document, date, title, city, url)
-                                            break
-                                else:
-                                    for p in provinceList:
-                                        if p in city:
-                                            saveDocx(document, date, title, city, url)
-                                            break
+                                for c in cityList:
+                                    if c in city:
+                                        saveDocx(document, date, title, city, url)
+                                        break
         else:
             print('handelUrl ERROR:', result.status_code, url)
 
@@ -115,7 +102,7 @@ curMonth = endMonth
 for i in range(0, 6):
     print('curYear:', curYear, 'curMonth:', curMonth)
     if curMonth == endMonth:
-        curDay = endDay - 9
+        curDay = endDay
         while curDay > 0:
             handelDateUrl(str(curYear) + '-' + str(curMonth) + '-' + str(curDay))
             curDay = curDay - 1
