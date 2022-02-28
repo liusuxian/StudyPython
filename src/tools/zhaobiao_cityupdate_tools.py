@@ -43,7 +43,7 @@ def handelDateUrl(date: str):
 
 
 def handelUrl(url: str, date: str):
-    time.sleep(2)
+    time.sleep(1)
     try:
         result = requests.get(url)
     except Exception as e:
