@@ -19,7 +19,7 @@ cityList = [
 
 
 def handelDateUrl(date: str):
-    time.sleep(1)
+    time.sleep(2)
     dateUrl = "https://www.bidcenter.com.cn/newsmore-" + date + '.html'
     print('dateUrl:', dateUrl)
     try:
@@ -36,7 +36,7 @@ def handelDateUrl(date: str):
 
 
 def handelUrl(url: str, date: str):
-    time.sleep(1)
+    time.sleep(2)
     try:
         result = requests.get(url)
     except Exception as e:
