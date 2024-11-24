@@ -31,7 +31,6 @@ def fetch_ssq_data(max_pages=1):
 
         # 如果没有更多数据，跳出循环
         if not items:
-            print("items:", items)
             break
 
         print(f"Page {page}: {len(items)} items found.")
