@@ -40,10 +40,10 @@ def fetch_ssq_data(max_pages=1):
             tdList = item.find_all("td")
             period_number = tdList[0].text
             date = tdList[1].text
-            first_prize = tdList[3].text
-            single_award = tdList[4].text
-            second_prize = tdList[5].text
-            second_single_award = tdList[6].text
+            first_prize = tdList[3].text if tdList[3].text != "_" else "0"
+            single_award = tdList[4].text if tdList[4].text != "_" else "0"
+            second_prize = tdList[5].text if tdList[5].text != "_" else "0"
+            second_single_award = tdList[6].text if tdList[6].text != "_" else "0"
             numbers_div = tdList[2].find("div", class_="qiu")
             numbers_divs = numbers_div.find_all("div")
             winning_numbers = " ".join([num_div.text for num_div in numbers_divs])
